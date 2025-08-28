@@ -48,14 +48,13 @@ export const updateSolution = async (req, res) => {
 
 export const deleteSolution = async (req, res) => {
   try {
-    const solution = await Solution.findById(req.params.id);
+    const solution = await Solution.findByIdAndDelete(req.params.id);
 
     if (!solution) {
       return res.status(404).json({ message: 'Solution not found' });
     }
 
-    await solution.remove();
-    res.status(200).json({ message: 'Solution removed' });
+    res.status(200).json({ message: 'Solution removed successfully' });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

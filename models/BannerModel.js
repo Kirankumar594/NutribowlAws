@@ -6,23 +6,33 @@ const bannerSchema = new mongoose.Schema({
         required: false,
         trim: true
     },
-    subtitle:{
-        type:String,
+    subtitle: {
+        type: String,
         required: false,
-
     },
     description: {
         type: String,
         required: false,
         trim: true
     },
-    points:{
-        type:[String],
-        required:false
+    points: {
+        type: [String],
+        required: false
     },
-    image: {
+    type: {
         type: String,
-        required: true
+        required: true,
+        default: 'hero'
+    },
+    buttonText: {
+        type: String,
+        required: false,
+        default: 'Learn More'
+    },
+    buttonLink: {
+        type: String,
+        required: false,
+        default: '/'
     }
 }, {
     timestamps: true

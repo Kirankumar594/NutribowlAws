@@ -4,15 +4,17 @@ import {
     getAllBanners, 
     getBanner, 
     updateBanner, 
-    deleteBanner 
+    deleteBanner,
+    getHomeBanners
 } from '../controllers/BannerController.js';
-import upload from '../middleware/upload.js';
 
 const router = express.Router();
-router.post('/', upload.any('image'), createBanner);
+
+router.post('/', createBanner);
 router.get('/', getAllBanners);
+router.get('/home', getHomeBanners);
 router.get('/:id', getBanner);
-router.put('/:id', upload.any('image'), updateBanner);
+router.put('/:id', updateBanner);
 router.delete('/:id', deleteBanner);
 
 export default router;

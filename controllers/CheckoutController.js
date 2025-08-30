@@ -49,8 +49,8 @@ export const processCheckout = async (req, res) => {
     const savedCheckout = await newCheckout.save();
     
     // Update status to confirmed
-    savedCheckout.status = 'Confirmed';
-    await savedCheckout.save();
+    // savedCheckout.status = 'Pending';
+    // await savedCheckout.save();
 
     // Successful response
     res.status(201).json({
@@ -115,3 +115,67 @@ async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 }
+// Add this function to your checkout controller
+
+// Add this function to your checkout controller
+
+export const updateOrderStatus = async (req, res) => {
+  try {
+    console.log('Received status update request for order:', req.params.orderId);
+    console.log('New status:', req.body.status);
+    
+    const { orderId } = req.params;
+    const { status } = req.body;
+
+    // Validate status
+    const validStatuses = ['Pending', 'Confirmed', 'Processing', 'Delivered', 'Cancelled'];
+    if (!validStatuses.includes(status)) {
+      return res.status(400).json({
+        success: false,
+        message: `Invalid status value. Must be one of: ${validStatuses.join(', ')}`
+      });
+    }
+
+    // Validate orderId format (if using MongoDB ObjectId)
+    if (!orderId.match(/^[0-9a-fA-F]{24}$/)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid order ID format'
+      });
+    }
+
+    // Find and update the order
+    const updatedOrder = await Checkout.findByIdAndUpdate(
+      orderId,
+      { status: status },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedOrder) {
+      return res.status(404).json({
+        success: false,
+        message: 'Order not found'
+      });
+    }
+
+    console.log('Order status updated successfully:', updatedOrder._id, 'to', status);
+
+    res.json({
+      success: true,
+      message: 'Order status updated successfully',
+      data: {
+        orderId: updatedOrder._id,
+        status: updatedOrder.status,
+        updatedAt: new Date()
+      }
+    });
+
+  } catch (error) {
+    console.error('Update order status error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error updating order status',
+      error: error.message
+    });
+  }
+};

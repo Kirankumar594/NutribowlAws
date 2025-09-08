@@ -1,29 +1,26 @@
-// routes/aboutRoutes.js
-import express from 'express';
+import express from "express";
 import {
-  getAbout,
   createAbout,
+  getAbouts,
+  getAboutById,
   updateAbout,
   deleteAbout,
-  uploadTeamImage,
-  deleteImage,
-  getAllAbout
-} from '../controllers/aboutController.js';
-import upload from '../middleware/upload.js'; // Your universal multer
+  uploadImage,
+  deleteImage
+} from "../controllers/aboutController.js";
+import upload  from "../middleware/upload.js";
 
 const router = express.Router();
 
-// Public routes
-router.get('/', getAbout);
+// Full CRUD for About
+router.post("/", upload.any(), createAbout);
+router.get("/", getAbouts);
+router.get("/:id", getAboutById);
+router.put("/:id", upload.any(), updateAbout);
+router.delete("/:id", deleteAbout);
 
-// Admin routes (add authentication middleware as needed)
-router.post('/', createAbout);
-router.put('/:id', updateAbout);
-router.delete('/:id', deleteAbout);
-router.get('/all', getAllAbout);
-
-// Image upload routes
-router.post('/upload-image', upload.single('teamImage'), uploadTeamImage);
-router.delete('/delete-image/:filename', deleteImage);
+// Image routes
+router.post("/upload-image", upload.single('image'), uploadImage);
+router.delete("/delete-image/:filename", deleteImage);
 
 export default router;

@@ -70,6 +70,23 @@ export const updateBenefit = async (req, res) => {
 // @desc    Delete a benefit
 // @route   DELETE /api/benefits/:id
 // @access  Private/Admin
+// export const deleteBenefit = async (req, res) => {
+//   try {
+//     const benefit = await Benefit.findById(req.params.id);
+
+//     if (!benefit) {
+//       return res.status(404).json({ message: 'Benefit not found' });
+//     }
+
+//     // TODO: Delete icon file from server before deleting record
+//     await benefit.remove();
+//     res.status(200).json({ message: 'Benefit removed' });
+//   } catch (error) {
+//     res.status(500).json({ message: 'Server Error', error: error.message });
+//   }
+// };
+
+
 export const deleteBenefit = async (req, res) => {
   try {
     const benefit = await Benefit.findById(req.params.id);
@@ -79,8 +96,11 @@ export const deleteBenefit = async (req, res) => {
     }
 
     // TODO: Delete icon file from server before deleting record
-    await benefit.remove();
-    res.status(200).json({ message: 'Benefit removed' });
+    
+    // Replace benefit.remove() with findByIdAndDelete()
+    await Benefit.findByIdAndDelete(req.params.id);
+    
+    res.status(200).json({ message: 'Benefit removed successfully' });
   } catch (error) {
     res.status(500).json({ message: 'Server Error', error: error.message });
   }

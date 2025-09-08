@@ -192,7 +192,7 @@ function checkFileType(file, cb) {
 // Create upload middleware
 const upload = multer({
   storage: storage,
-  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
+  limits: { fileSize: 50 * 1024 * 1024 }, // 10MB
   fileFilter: function (req, file, cb) {
     checkFileType(file, cb);
   },

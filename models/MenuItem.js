@@ -9,11 +9,14 @@ const menuItemSchema = new mongoose.Schema({
   carbs: { type: Number, required: true },
   fat: { type: Number, required: true },
   ingredients: { type: [String], required: true },
-  category: { 
-    type: String, 
-    required: true,
-    enum: ['breakfast', 'main', 'snacks', 'desserts']
-  },
+category: { 
+  type: String, 
+  required: true,
+  enum: [
+    'salad', 'bowls', 'wraps', 'sandwich', 'cheat meals', 
+    'burger', 'pizza', 'detox', 'non-veg', 'veg', 'Starters and Sides','Smoothies'
+  ]
+},
   dietType: { 
     type: [String], 
     required: true,

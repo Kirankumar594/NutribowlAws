@@ -1,5 +1,6 @@
 import Checkout from "../models/CheckoutModel.js";
 import jwt from 'jsonwebtoken';
+import mongoose from "mongoose";
 
 export const processCheckout = async (req, res) => {
   try {
@@ -94,20 +95,15 @@ export const getAllOrders = async (req, res) => {
 };
 
 
-// GET order by ID
-export const getOderById = 
-async (req, res) => {
+// // GET order by ID
+export const getOderById = async (req, res) => {
   try {
-    const { customerId } = req.params;
-
+    const { id } = req.params; // Changed from customerId to id
+    
     // Find all orders with matching customer.id
-    const orders = await Checkout.find({ "customer.id": customerId })
-      .populate("customer.id", "name email phone") // optional: populate customer details
+    const orders = await Checkout.find({ "customer.id": id })
+      .populate("customer.id", "name email phone")
       .exec();
-
-    if (!orders || orders.length === 0) {
-      return res.status(404).json({ message: "No orders found for this customer" });
-    }
 
     res.json(orders);
   } catch (error) {
@@ -115,7 +111,32 @@ async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 }
-// Add this function to your checkout controller
+// GET orders by customer ID
+// export const getOrdersByCustomerId = async (req, res) => {
+//   try {
+//     const { customerId } = req.params;
+    
+//     // Validate customerId is a valid ObjectId
+//     // if (!mongoose.Types.ObjectId.isValid(customerId)) {
+//     //   return res.status(400).json({ message: "Invalid customer ID format" });
+//     // }
+
+//     // Find all orders with matching customer.id
+//     const orders = await Checkout.find({ "customer.id": customerId })
+//       .populate("customer.id", "name email phone") // optional: populate customer details
+//       .sort({ createdAt: -1 }) // Sort by most recent first
+//       .exec();
+
+//     if (!orders || orders.length === 0) {
+//       return res.status(404).json({ message: "No orders found for this customer" });
+//     }
+
+//     res.json(orders);
+//   } catch (error) {
+//     console.error("Error fetching orders:", error);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// }
 
 // Add this function to your checkout controller
 

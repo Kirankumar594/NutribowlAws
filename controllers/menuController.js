@@ -6,7 +6,7 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 
 const __filename = fileURLToPath(import.meta.url);
-const _dirname = dirname(__filename);
+const _dirname = dirname(_filename);
 
 // Helper to process image upload
 const processImageUpload = (req) => {
@@ -16,7 +16,7 @@ const processImageUpload = (req) => {
   
   // In production, you would upload to cloud storage (S3, Cloudinary, etc.)
   // Here we'll just return the local path
-  return `/uploads/${req.file.filename}`;
+  return /uploads/${req.file.filename};
 };
 
 
@@ -44,14 +44,21 @@ export const createMenuItem = async (req, res) => {
       ? req.body.planType.split(',').map(item => item.trim())
       : Array.isArray(req.body.planType) ? req.body.planType : [];
 
+    // Parse numeric values - use 0 if empty/undefined
+    const price = req.body.price !== undefined ? parseFloat(req.body.price) || 0 : 0;
+    const calories = req.body.calories !== undefined ? parseFloat(req.body.calories) || 0 : 0;
+    const protein = req.body.protein !== undefined ? parseFloat(req.body.protein) || 0 : 0;
+    const carbs = req.body.carbs !== undefined ? parseFloat(req.body.carbs) || 0 : 0;
+    const fat = req.body.fat !== undefined ? parseFloat(req.body.fat) || 0 : 0;
+
     const newItem = new MenuItem({
       name: req.body.name,
       description: req.body.description,
-      price: req.body.price ? parseFloat(req.body.price) : undefined,
-      calories: req.body.calories ? parseFloat(req.body.calories) : undefined,
-      protein: req.body.protein ? parseFloat(req.body.protein) : undefined,
-      carbs: req.body.carbs ? parseFloat(req.body.carbs) : undefined,
-      fat: req.body.fat ? parseFloat(req.body.fat) : undefined,
+      price: price,
+      calories: calories,
+      protein: protein,
+      carbs: carbs,
+      fat: fat,
       category: req.body.category,
       dietType,
       planType,
@@ -183,23 +190,34 @@ export const updateMenuItem = async (req, res) => {
     const dietType = Array.isArray(req.body.dietType) ? req.body.dietType : [];
     const planType = Array.isArray(req.body.planType) ? req.body.planType : [];
 
+    // Parse numeric values - use 0 if empty/undefined
+    const parsedPrice = price !== undefined ? parseFloat(price) || 0 : undefined;
+    const parsedCalories = calories !== undefined ? parseFloat(calories) || 0 : undefined;
+    const parsedProtein = protein !== undefined ? parseFloat(protein) || 0 : undefined;
+    const parsedCarbs = carbs !== undefined ? parseFloat(carbs) || 0 : undefined;
+    const parsedFat = fat !== undefined ? parseFloat(fat) || 0 : undefined;
+
+    const updateData = {
+      name,
+      description,
+      ingredients,
+      allergens,
+      category,
+      dietType,
+      planType,
+      isActive
+    };
+
+    // Only include numeric fields if they were provided
+    if (price !== undefined) updateData.price = parsedPrice;
+    if (calories !== undefined) updateData.calories = parsedCalories;
+    if (protein !== undefined) updateData.protein = parsedProtein;
+    if (carbs !== undefined) updateData.carbs = parsedCarbs;
+    if (fat !== undefined) updateData.fat = parsedFat;
+
     const updatedItem = await MenuItem.findByIdAndUpdate(
       req.params.id,
-      {
-        name,
-        description,
-        price: price !== undefined ? parseFloat(price) : undefined,
-        calories: calories !== undefined ? parseFloat(calories) : undefined,
-        protein: protein !== undefined ? parseFloat(protein) : undefined,
-        carbs: carbs !== undefined ? parseFloat(carbs) : undefined,
-        fat: fat !== undefined ? parseFloat(fat) : undefined,
-        ingredients,
-        allergens,
-        category,
-        dietType,
-        planType,
-        isActive
-      },
+      updateData,
       { new: true }
     );
 
@@ -239,7 +257,6 @@ export const deleteMenuItem = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-
 
 // Toggle item status
 export const toggleItemStatus = async (req, res) => {

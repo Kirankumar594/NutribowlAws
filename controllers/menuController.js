@@ -6,7 +6,7 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const _dirname = dirname(_filename);
 
 // Helper to process image upload
 const processImageUpload = (req) => {
@@ -16,7 +16,7 @@ const processImageUpload = (req) => {
   
   // In production, you would upload to cloud storage (S3, Cloudinary, etc.)
   // Here we'll just return the local path
-  return `/uploads/${req.file.filename}`;
+  return /uploads/${req.file.filename};
 };
 
 
@@ -45,12 +45,20 @@ export const createMenuItem = async (req, res) => {
       : Array.isArray(req.body.planType) ? req.body.planType : [];
 
     const newItem = new MenuItem({
-      ...req.body,
+      name: req.body.name,
+      description: req.body.description,
+      price: req.body.price ? parseFloat(req.body.price) : undefined,
+      calories: req.body.calories ? parseFloat(req.body.calories) : undefined,
+      protein: req.body.protein ? parseFloat(req.body.protein) : undefined,
+      carbs: req.body.carbs ? parseFloat(req.body.carbs) : undefined,
+      fat: req.body.fat ? parseFloat(req.body.fat) : undefined,
+      category: req.body.category,
+      dietType,
+      planType,
       image: imagePath,
       ingredients,
       allergens,
-      dietType,
-      planType
+      isActive: req.body.isActive !== undefined ? req.body.isActive : true,
     });
 
     await newItem.save();
@@ -59,6 +67,7 @@ export const createMenuItem = async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 };
+
 
 // Get all menu items
 export const getAllMenuItems = async (req, res) => {
@@ -156,27 +165,21 @@ export const getMenuItem = async (req, res) => {
 export const updateMenuItem = async (req, res) => {
   try {
     const { name, description, price, calories, protein, carbs, fat, category, isActive } = req.body;
-    
-    // Handle ingredients and allergens - they might come as arrays or strings
+
     let ingredients = req.body.ingredients;
     if (typeof ingredients === 'string') {
       ingredients = ingredients.split(',').map(item => item.trim());
-    } else if (Array.isArray(ingredients)) {
-      // Already an array, no processing needed
-    } else {
+    } else if (!Array.isArray(ingredients)) {
       ingredients = [];
     }
 
     let allergens = req.body.allergens;
     if (typeof allergens === 'string') {
       allergens = allergens.split(',').map(item => item.trim()).filter(Boolean);
-    } else if (Array.isArray(allergens)) {
-      allergens = allergens.filter(Boolean);
-    } else {
+    } else if (!Array.isArray(allergens)) {
       allergens = [];
     }
 
-    // Handle dietType and planType
     const dietType = Array.isArray(req.body.dietType) ? req.body.dietType : [];
     const planType = Array.isArray(req.body.planType) ? req.body.planType : [];
 
@@ -185,11 +188,11 @@ export const updateMenuItem = async (req, res) => {
       {
         name,
         description,
-        price,
-        calories,
-        protein,
-        carbs,
-        fat,
+        price: price !== undefined ? parseFloat(price) : undefined,
+        calories: calories !== undefined ? parseFloat(calories) : undefined,
+        protein: protein !== undefined ? parseFloat(protein) : undefined,
+        carbs: carbs !== undefined ? parseFloat(carbs) : undefined,
+        fat: fat !== undefined ? parseFloat(fat) : undefined,
         ingredients,
         allergens,
         category,
@@ -210,6 +213,7 @@ export const updateMenuItem = async (req, res) => {
     res.status(500).json({ message: "Server Error", error: error.message });
   }
 };
+
 
 
 

@@ -6,7 +6,7 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 
 const __filename = fileURLToPath(import.meta.url);
-const _dirname = dirname(_filename);
+const _dirname = dirname(__filename);
 
 // Helper to process image upload
 const processImageUpload = (req) => {
@@ -16,7 +16,7 @@ const processImageUpload = (req) => {
   
   // In production, you would upload to cloud storage (S3, Cloudinary, etc.)
   // Here we'll just return the local path
-  return /uploads/${req.file.filename};
+  return `/uploads/${req.file.filename}`;
 };
 
 

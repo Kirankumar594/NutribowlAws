@@ -1,0 +1,28 @@
+import mongoose from 'mongoose';
+
+const facilitiesSchema = new mongoose.Schema({
+  title: {
+    type: String,
+    required: true,
+  },
+  description: {
+    type: String,
+    required: true,
+  },
+  features: {
+    type: [String], 
+    required: true,
+  },
+  image: {
+    type: String,
+    required: true,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+});
+
+const Facilities = mongoose.model('Facilities', facilitiesSchema);
+
+export default Facilities;
